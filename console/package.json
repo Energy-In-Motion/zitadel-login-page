@@ -34,7 +34,7 @@
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-brands-svg-icons": "^7.2.0",
     "@netlify/build-info": "^10.5.1",
-    "@ng-icons/core": "^33.2.2",
+    "@ng-icons/core": "^36.1.0",
     "@ng-icons/heroicons": "^33.2.2",
     "@ngx-translate/core": "^17.0.0",
     "@tanstack/angular-query-experimental": "^5.100.11",
