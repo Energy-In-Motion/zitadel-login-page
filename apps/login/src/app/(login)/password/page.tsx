@@ -1,11 +1,12 @@
 import { Alert } from "@/components/alert";
 import { DynamicTheme } from "@/components/dynamic-theme";
 import { PasswordForm } from "@/components/password-form";
+import { SignInWithIdp } from "@/components/sign-in-with-idp";
 import { Translated } from "@/components/translated";
 import { UserAvatar } from "@/components/user-avatar";
 import { getServiceConfig } from "@/lib/service-url";
 import { loadMostRecentSession } from "@/lib/session";
-import { getBrandingSettings, getDefaultOrg, getLoginSettings } from "@/lib/zitadel";
+import { getActiveIdentityProviders, getBrandingSettings, getDefaultOrg, getLoginSettings } from "@/lib/zitadel";
 import { Organization } from "@zitadel/proto/zitadel/org/v2/org_pb";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -18,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page(props: { searchParams: Promise<Record<string | number | symbol, string | undefined>> }) {
   const searchParams = await props.searchParams;
-  let { loginName, organization, requestId } = searchParams;
+  let { loginName, organization, requestId, altIdp } = searchParams;
 
   const _headers = await headers();
   const { serviceConfig } = getServiceConfig(_headers);
@@ -49,6 +50,15 @@ export default async function Page(props: { searchParams: Promise<Record<string 
     serviceConfig,
     organization: organization ?? sessionFactors?.factors?.user?.organizationId ?? defaultOrganization,
   });
+
+  const showAltIdp = altIdp === "true";
+
+  const identityProviders = showAltIdp
+    ? await getActiveIdentityProviders({
+        serviceConfig,
+        orgId: organization ?? sessionFactors?.factors?.user?.organizationId ?? defaultOrganization,
+      }).then((resp) => resp.identityProviders)
+    : [];
 
   return (
     <DynamicTheme branding={branding}>
@@ -93,6 +103,19 @@ export default async function Page(props: { searchParams: Promise<Record<string 
             defaultOrganization={defaultOrganization}
             loginSettings={loginSettings}
           />
+        )}
+
+        {showAltIdp && !!identityProviders?.length && (
+          <div className="w-full pt-6 pb-4">
+            <SignInWithIdp
+              identityProviders={identityProviders}
+              requestId={requestId}
+              organization={organization}
+              postErrorRedirectUrl="/password"
+              loginHint={loginName}
+              showLabel={true}
+            />
+          </div>
         )}
       </div>
     </DynamicTheme>

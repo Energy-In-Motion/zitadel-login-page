@@ -74,3 +74,84 @@ html {
     background-position: -200% 0;
   }
 }
+
+/* EIM custom login form overrides — force dark text on white background */
+.eim-form-overrides {
+  /* Headings */
+  h1 {
+    color: #01363f !important;
+    text-align: left !important;
+  }
+
+  /* Subtitles / descriptions */
+  .ztdl-p,
+  p {
+    color: #6b7280 !important;
+  }
+
+  /* Labels */
+  label {
+    color: #374151 !important;
+  }
+
+  /* Links */
+  a {
+    color: #01363f !important;
+  }
+
+  /* Input text & placeholder */
+  input,
+  textarea,
+  select {
+    color: #111827 !important;
+    caret-color: #111827 !important;
+
+    &::placeholder {
+      color: #9ca3af !important;
+    }
+  }
+
+  /* Primary / submit button → blue */
+  button[type="submit"] {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background-color: #0369a1 !important;
+    }
+  }
+
+  /* Secondary / back button → visible teal outline */
+  button[type="button"] {
+    color: #01363f !important;
+    border-color: #01363f !important;
+  }
+
+  /* All generic text (validation messages, info alerts, spans, etc.) */
+  span,
+  div {
+    color: inherit;
+  }
+
+  /* Force all text inside to be dark by default */
+  color: #111827 !important;
+
+  /* Alert / info boxes */
+  [role="alert"],
+  .text-yellow-500,
+  .text-red-500 {
+    color: inherit !important;
+  }
+
+  /* Small / helper text */
+  small,
+  .text-xs,
+  .text-sm {
+    color: #6b7280 !important;
+  }
+
+  /* SVG icons that might be white */
+  svg {
+    color: currentColor;
+  }
+}

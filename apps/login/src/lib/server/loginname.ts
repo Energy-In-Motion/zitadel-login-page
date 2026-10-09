@@ -490,6 +490,29 @@ export async function sendLoginname(command: SendLoginnameCommand) {
 
         return { redirect: "/passkey?" + passkeyParams };
       } else if (methods.authMethodTypes.includes(AuthenticationMethodType.IDP)) {
+        // When the user also has a password and local auth is allowed, send them to the password page
+        if (
+          methods.authMethodTypes.includes(AuthenticationMethodType.PASSWORD) &&
+          userLoginSettings?.allowLocalAuthentication
+        ) {
+          const paramsPasswordWithIdp = new URLSearchParams({
+            loginName: redirectLoginName,
+            altIdp: "true",
+          });
+
+          if (organization) {
+            paramsPasswordWithIdp.append("organization", organization);
+          }
+
+          if (command.requestId) {
+            paramsPasswordWithIdp.append("requestId", command.requestId);
+          }
+
+          return {
+            redirect: "/password?" + paramsPasswordWithIdp,
+          };
+        }
+
         return redirectUserToIDP(userId, organization);
       } else if (methods.authMethodTypes.includes(AuthenticationMethodType.PASSWORD)) {
         // Check if password authentication is allowed

@@ -46,6 +46,7 @@ const nextConfig = {
   // incompatibilities. Keep this list in sync with package.json dependencies
   // when adding new OpenTelemetry or logging packages.
   serverExternalPackages: [
+    '@connectrpc/connect-node',
     'winston',
     '@opentelemetry/api',
     '@opentelemetry/api-logs',
