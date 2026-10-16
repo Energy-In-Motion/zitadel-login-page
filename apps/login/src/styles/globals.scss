@@ -77,81 +77,153 @@ html {
 
 /* EIM custom login form overrides — force dark text on white background */
 .eim-form-overrides {
-  /* Headings */
-  h1 {
-    color: #01363f !important;
-    text-align: left !important;
-  }
+    color: #01363F !important;
 
-  /* Subtitles / descriptions */
-  .ztdl-p,
-  p {
-    color: #6b7280 !important;
-  }
+    /* Headings */
+    h1 {
+      color: #01363F !important;
+      text-align: left;
+    }
 
-  /* Labels */
-  label {
-    color: #374151 !important;
-  }
+    /* Body text */
+    .ztdl-p, p {
+      color: #555555 !important;
+    }
 
-  /* Links */
-  a {
-    color: #01363f !important;
-  }
+    /* Labels */
+    label {
+      color: #01363F !important;
+    }
 
-  /* Input text & placeholder */
-  input,
-  textarea,
-  select {
-    color: #111827 !important;
-    caret-color: #111827 !important;
+    /* Links */
+    a {
+      color: #01363F !important;
+      &:hover {
+        color: #38e0cf !important;
+      }
+    }
 
-    &::placeholder {
-      color: #9ca3af !important;
+    /* Inputs */
+    input, textarea, select {
+      color: #01363F !important;
+      background-color: #e7f1f1 !important;
+      border-color: #89aaaa !important;
+      &::placeholder {
+        color: #898989 !important;
+      }
+      &:focus {
+        border-color: #38e0cf !important;
+        outline-color: #38e0cf !important;
+      }
+    }
+
+    /* Primary action button (Continue, Submit) */
+    button[type="submit"] {
+      background-color: #38e0cf !important;
+      color: #01363F !important;
+      border: none !important;
+      font-weight: 600;
+      &:hover {
+        background-color: #2bc4b5 !important;
+      }
+    }
+
+    /* Secondary button (Back) */
+    button[type="button"] {
+      border-color: #01363F !important;
+      color: #01363F !important;
+      background-color: transparent !important;
+      &:hover {
+        background-color: #e7f1f1 !important;
+      }
+    }
+
+    /* Account session cards - force light background */
+    .group {
+      background-color: #e7f1f1 !important;
+      border-color: #89aaaa !important;
+      color: #01363F !important;
+
+      &:hover {
+        background-color: #d5e8e8 !important;
+        box-shadow: 0 4px 12px rgba(1, 54, 63, 0.15) !important;
+      }
+
+      /* Display name */
+      span {
+        color: #01363F !important;
+      }
+
+      /* Login name and subtitle text */
+      .text-xs {
+        color: #555555 !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* Add another account row */
+    .hover\:bg-black\/10 {
+      color: #01363F !important;
+      &:hover {
+        background-color: #e7f1f1 !important;
+      }
+      .text-sm {
+        color: #01363F !important;
+      }
+      .rounded-full {
+        background-color: #d5e8e8 !important;
+      }
+    }
+
+    /* IDP / Microsoft Login button */
+    button.group, a.group, [class*="idp"] {
+      &[class*="provider"], &:has(img) {
+        background-color: #01363F !important;
+        color: #ffffff !important;
+        span {
+          color: #ffffff !important;
+        }
+        &:hover {
+          background-color: #024a56 !important;
+        }
+      }
+    }
+
+    /* Generic span/div inherit */
+    > span, > div {
+      color: inherit;
+    }
+
+    /* Alerts */
+    [role="alert"] {
+      color: #dc2626 !important;
+    }
+
+    /* Helper text */
+    small, .text-sm, [class*="helper"] {
+      color: #555555;
+    }
+
+    /* SVG icons */
+    svg {
+      color: currentColor;
+    }
+
+    /* Password requirements checkmarks */
+    .text-green-500, [class*="green"] {
+      color: #38e0cf !important;
+    }
+
+    /* Override any dark mode tokens that leak through */
+    [class*="dark:bg-background-dark"] {
+      background-color: #e7f1f1 !important;
+    }
+
+    [class*="dark:bg-primary-dark"] {
+      background-color: #01363F !important;
+      color: #ffffff !important;
+      * {
+        color: #ffffff !important;
+      }
     }
   }
-
-  /* Primary / submit button → blue */
-  button[type="submit"] {
-    background-color: #0284c7 !important;
-    color: #ffffff !important;
-
-    &:hover {
-      background-color: #0369a1 !important;
-    }
-  }
-
-  /* Secondary / back button → visible teal outline */
-  button[type="button"] {
-    color: #01363f !important;
-    border-color: #01363f !important;
-  }
-
-  /* All generic text (validation messages, info alerts, spans, etc.) */
-  span,
-  div {
-    color: inherit;
-  }
-
-  /* Force all text inside to be dark by default */
-  color: #111827 !important;
-
-  /* Alert / info boxes */
-  [role="alert"],
-  .text-yellow-500,
-  .text-red-500 {
-    color: inherit !important;
-  }
-
-  /* Small / helper text */
-  small,
-  .text-xs,
-  .text-sm {
-    color: #6b7280 !important;
-  }
-
-  /* SVG icons that might be white */
-  svg {
-    color: currentColor;
-  }
-}
