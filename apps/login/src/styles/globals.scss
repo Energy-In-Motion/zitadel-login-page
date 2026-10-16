@@ -118,13 +118,13 @@ html {
     }
 
     /* Primary action button (Continue, Submit) */
-    button[type="submit"] {
-      background-color: #38e0cf !important;
+    button[type="submit"]:not([class*="flex-1"]) {
+      background-color: #01363F !important;
       color: #01363F !important;
       border: none !important;
       font-weight: 600;
       &:hover {
-        background-color: #2bc4b5 !important;
+        background-color: #024a56 !important;
       }
     }
 
@@ -176,10 +176,10 @@ html {
     }
 
     /* IDP / Microsoft Login button */
-    button.group, a.group, [class*="idp"] {
-      &[class*="provider"], &:has(img) {
+    button[class*="flex-1"] {
         background-color: #01363F !important;
         color: #ffffff !important;
+        border-color: #01363F !important;
         span {
           color: #ffffff !important;
         }
@@ -187,7 +187,6 @@ html {
           background-color: #024a56 !important;
         }
       }
-    }
 
     /* Generic span/div inherit */
     > span, > div {
