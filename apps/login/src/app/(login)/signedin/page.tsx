@@ -64,7 +64,7 @@ async function loadUserDashboards(
         const existing = projectMap.get(authz.project.id);
         const roles = (authz.roles || []).map((r) => r.displayName || r.key);
         if (existing) {
-          existing.roles = [...new Set([...existing.roles, ...roles])];
+          existing.roles = Array.from(new Set([...existing.roles, ...roles]));
         } else {
           projectMap.set(authz.project.id, { name: authz.project.name, roles });
         }
