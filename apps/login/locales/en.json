@@ -28,7 +28,7 @@
     "register": "Register new user",
     "submit": "Continue",
     "labels": {
-      "loginname": "Loginname",
+      "loginname": "Email Address",
       "username": "Username",
       "usernameOrPhoneNumber": "Username or phone number",
       "usernameOrEmail": "Username or email"
@@ -162,7 +162,7 @@
     "orSignInWith": "or sign in with",
     "signInWithApple": "Sign in with Apple",
     "signInWithGoogle": "Sign in with Google",
-    "signInWithAzureAD": "Sign in with AzureAD",
+    "signInWithAzureAD": "Login with Microsoft",
     "signInWithGithub": "Sign in with GitHub",
     "signInWithGitlab": "Sign in with GitLab",
     "signInWithZitadel": "Sign in with Zitadel",

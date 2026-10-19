@@ -47,3 +47,17 @@ export async function createServiceForHost<T extends ServiceClass>(service: T, s
 
   return createClientFor<T>(service)(transport);
 }
+
+
+export async function getServiceToken(): Promise<string> {
+  if (hasSystemUserCredentials()) {
+    return systemAPIToken();
+  } else if (hasLoginClientKey()) {
+    return loginClientKeyToken();
+  } else if (hasServiceUserToken()) {
+    return process.env.ZITADEL_SERVICE_USER_TOKEN!;
+  }
+  throw new Error(
+    "No authentication credentials found. Set ZITADEL_LOGINCLIENT_KEYFILE, system user credentials, or ZITADEL_SERVICE_USER_TOKEN",
+  );
+}

@@ -1387,6 +1387,89 @@ export async function listAuthenticationMethodTypes({
   });
 }
 
+import { getServiceToken } from "./service";
+
+function buildZitadelHeaders(token: string, serviceConfig: ServiceConfig): Record<string, string> {
+  const h: Record<string, string> = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+  if (serviceConfig.instanceHost) {
+    h["x-zitadel-instance-host"] = serviceConfig.instanceHost;
+  }
+  if (serviceConfig.publicHost) {
+    h["x-zitadel-public-host"] = serviceConfig.publicHost;
+  }
+  applyCustomHeaders({
+    set: (key, value) => { h[key] = value; },
+    remove: (key) => { delete h[key]; },
+  });
+  return h;
+}
+
+
+export async function listUserAuthorizations({
+  serviceConfig,
+  userId,
+}: WithServiceConfig<{ userId: string }>) {
+  const token = await getServiceToken();
+
+  const res = await fetch(
+    `${serviceConfig.baseUrl}/zitadel.authorization.v2.AuthorizationService/ListAuthorizations`,
+    {
+      method: "POST",
+      headers: buildZitadelHeaders(token, serviceConfig),
+      body: JSON.stringify({
+        filters: [{ inUserIds: { ids: [userId] } }],
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    return { authorizations: [] };
+  }
+  return res.json() as Promise<{
+    authorizations: Array<{
+      id: string;
+      project: { id: string; name: string };
+      state: string;
+      roles: Array<{ key: string; displayName: string }>;
+    }>;
+  }>;
+}
+
+
+export async function listProjectApplications({
+  serviceConfig,
+  projectId,
+}: WithServiceConfig<{ projectId: string }>) {
+  const token = await getServiceToken();
+
+  const res = await fetch(
+    `${serviceConfig.baseUrl}/zitadel.application.v2.ApplicationService/ListApplications`,
+    {
+      method: "POST",
+      headers: buildZitadelHeaders(token, serviceConfig),
+      body: JSON.stringify({
+        filters: [{ projectIdFilter: { projectId } }],
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    return { applications: [] };
+  }
+  return res.json() as Promise<{
+    applications: Array<{
+      applicationId: string;
+      name: string;
+      projectId: string;
+      state: string;
+      oidcConfiguration?: { redirectUris: string[] };
+    }>;
+  }>;
+}
+
 export interface ServiceConfig {
   baseUrl: string;
   instanceHost?: string; // only for multi-tenant

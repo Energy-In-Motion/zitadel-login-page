@@ -1,4 +1,5 @@
 import { Alert, AlertType } from "@/components/alert";
+import { DashboardSection } from "@/components/dashboard-section";
 import { Button, ButtonVariants } from "@/components/button";
 import { DynamicTheme } from "@/components/dynamic-theme";
 import { Translated } from "@/components/translated";
@@ -8,7 +9,14 @@ import { getMostRecentCookieWithLoginname, getSessionCookieById } from "@/lib/co
 import { completeDeviceAuthorization } from "@/lib/server/device";
 import { getServiceConfig } from "@/lib/service-url";
 import { loadMostRecentSession } from "@/lib/session";
-import { getBrandingSettings, getLoginSettings, getSession, ServiceConfig } from "@/lib/zitadel";
+import {
+  getBrandingSettings,
+  getLoginSettings,
+  getSession,
+  listProjectApplications,
+  listUserAuthorizations,
+  ServiceConfig,
+} from "@/lib/zitadel";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
@@ -21,16 +29,71 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function loadSessionById(serviceConfig: ServiceConfig, sessionId: string, organization?: string) {
   const recent = await getSessionCookieById({ sessionId, organization });
-
-  if (!recent) {
-    return undefined;
-  }
-
+  if (!recent) return undefined;
   return getSession({ serviceConfig, sessionId: recent.id, sessionToken: recent.token }).then((response) => {
-    if (response?.session) {
-      return response.session;
-    }
+    if (response?.session) return response.session;
   });
+}
+
+function getDashboardUrl(redirectUris: string[]): string | null {
+  for (const uri of redirectUris) {
+    try {
+      const url = new URL(uri);
+      if (url.hostname === "localhost" || url.hostname.includes("auth")) continue;
+      return `${url.protocol}//${url.host}`;
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+
+async function loadUserDashboards(
+  serviceConfig: ServiceConfig,
+  userId: string,
+): Promise<Array<{ name: string; url: string; roles: string[] }>> {
+  try {
+    const authzResponse = await listUserAuthorizations({ serviceConfig, userId });
+    const authorizations = authzResponse.authorizations || [];
+
+    
+    const projectMap = new Map<string, { name: string; roles: string[] }>();
+    for (const authz of authorizations) {
+      if (authz.state === "STATE_ACTIVE" && authz.project) {
+        const existing = projectMap.get(authz.project.id);
+        const roles = (authz.roles || []).map((r) => r.displayName || r.key);
+        if (existing) {
+          existing.roles = [...new Set([...existing.roles, ...roles])];
+        } else {
+          projectMap.set(authz.project.id, { name: authz.project.name, roles });
+        }
+      }
+    }
+
+    
+    const dashboards: Array<{ name: string; url: string; roles: string[] }> = [];
+
+    await Promise.all(
+      Array.from(projectMap.entries()).map(async ([projectId, info]) => {
+        const appsResponse = await listProjectApplications({ serviceConfig, projectId });
+        for (const app of appsResponse.applications || []) {
+          if (app.oidcConfiguration?.redirectUris) {
+            const url = getDashboardUrl(app.oidcConfiguration.redirectUris);
+            if (url) {
+              dashboards.push({ name: info.name || app.name, url, roles: info.roles });
+              break; 
+            }
+          }
+        }
+      }),
+    );
+
+    return dashboards;
+  } catch (error) {
+    console.error("Failed to fetch user dashboards:", error);
+    return [];
+  }
 }
 
 export default async function Page(props: { searchParams: Promise<any> }) {
@@ -91,6 +154,10 @@ export default async function Page(props: { searchParams: Promise<any> }) {
 
   const isSamePage = redirectUri?.startsWith("/signedin") ?? false;
 
+  // Fetch dashboards the user has access to
+  const userId = sessionFactors?.factors?.user?.id;
+  const dashboards = userId ? await loadUserDashboards(serviceConfig, userId) : [];
+
   return (
     <DynamicTheme branding={branding}>
       <div className="flex flex-col space-y-4">
@@ -107,6 +174,9 @@ export default async function Page(props: { searchParams: Promise<any> }) {
           showDropdown={!(requestId && requestId.startsWith("device_"))}
           searchParams={searchParams}
         />
+
+        {/* Dashboard cards */}
+        {dashboards.length > 0 && <DashboardSection dashboards={dashboards} />}
       </div>
 
       <div className="w-full">
