@@ -46,7 +46,7 @@ function CrossIcon({ title }: { title: string }) {
 function renderIcon(matched: boolean, t: ReturnType<typeof useTranslations>) {
   return matched ? <CheckIcon title={t("complexity.matches")} /> : <CrossIcon title={t("complexity.doesNotMatch")} />;
 }
-const desc = "text-14px leading-4 text-input-light-label dark:text-input-dark-label";
+const desc = "text-14px leading-4 text-primary-light-500 dark:text-primary-dark-500";
 
 export function PasswordComplexity({ passwordComplexitySettings, password, equals }: Props) {
   const t = useTranslations("password");
