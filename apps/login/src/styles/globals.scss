@@ -236,6 +236,22 @@ html {
         color: #ffffff !important;
       }
     }
+
+    
+    a > button[type="button"] {
+      color: #01363F !important;
+      * {
+        color: #01363F !important;
+      }
+    }
+    .border-divider-light, [class*="border-divider"] {
+      svg {
+        color: #01363F !important;
+      }
+      span {
+        color: #01363F !important;
+      }
+    }
   }
 
 
